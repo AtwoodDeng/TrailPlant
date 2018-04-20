@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 4663355109069550}
   - component: {fileID: 114466827638704808}
   m_Layer: 0
-  m_Name: PlantNode
+  m_Name: PlantStem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -126,12 +126,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_children: []
   m_parent: {fileID: 0}
-  m_type: 0
-  plantStem: {fileID: 1826254322591054, guid: 85c92c509475efb4eb4031ecc90be320, type: 2}
+  m_type: 1
+  plantStem: {fileID: 0}
   plantDot: {fileID: 0}
   trail: {fileID: 114982754646073898}
   lifeTime:
-    min: 5
+    min: 3
     max: 6
   speed:
     min: 4
@@ -140,16 +140,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: 0.0049438477
-      value: 0.9973755
-      inSlope: -1.2218051
-      outSlope: -1.2218051
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
       tangentMode: 0
     - serializedVersion: 2
-      time: 2.4997816
-      value: -3.011844
-      inSlope: -1.4322621
-      outSlope: -1.4322621
+      time: 2.0191345
+      value: 1.9398727
+      inSlope: 1
+      outSlope: 1
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -185,8 +185,8 @@ MonoBehaviour:
     min: 6
     max: 10
   RadOffset:
-    min: 10
-    max: 15
+    min: 12
+    max: 20
   m_size: 0
   temInvRadius: 5
   lifeTimer: 0

@@ -247,10 +247,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 1826254322591054, guid: d79d14085ef9029458404f805f299f3a, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d79d14085ef9029458404f805f299f3a, type: 2}
   m_IsPrefabParent: 0
@@ -311,10 +307,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 1826254322591054, guid: d79d14085ef9029458404f805f299f3a, type: 2}
-  timeInterval: 2
-  distanceInterval: 2
+  timeInterval:
+    min: 5
+    max: 9
+  distanceInterval:
+    min: 4
+    max: 6
+  maxActiveNode: 6
   timer: 0
   distancer: 0
+  plantNodes: []
 --- !u!1 &2144696977
 GameObject:
   m_ObjectHideFlags: 0
