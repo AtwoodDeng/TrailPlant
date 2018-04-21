@@ -206,8 +206,8 @@ MonoBehaviour:
     m_RotationOrder: 0
   intervel: 0.02
   initRadius:
-    min: 6
-    max: 10
+    min: 8
+    max: 12
   RadOffset:
     min: 10
     max: 15
@@ -243,9 +243,9 @@ MonoBehaviour:
   normal: {x: 0, y: 0, z: -1}
   meshDisposition: 0
   fadeType: 3
-  fadeLengthBegin: 0.5
-  fadeLengthEnd: 0.5
-  maxLength: 50
+  fadeLengthBegin: 1
+  fadeLengthEnd: 1
+  maxLength: 100
   debugDrawSpline: 1
   IsUpdateMesh: 1
   temHeight: 0

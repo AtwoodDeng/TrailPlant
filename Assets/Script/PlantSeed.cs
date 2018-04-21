@@ -22,6 +22,7 @@ public class PlantSeed : PlantBase {
     [SerializeField] [ReadOnly] float m_size = 1f;
     [SerializeField] float basicSize = 0.4f;
     [SerializeField] GameObject rootPrefab;
+	[SerializeField] GameObject activeEffect;
 
     public State MState {  get { return m_state;  } }
 
@@ -29,18 +30,30 @@ public class PlantSeed : PlantBase {
     public void OnTriggerEnter2D(Collider2D collision)
     {
         //Debug.Log("Active " + collision.tag);
-        if (collision.tag == "Plant")
-        {
+
+		if (collision.tag == "Player") {
 
             if (m_state != State.Active)
             {
                 m_state = State.Active;
                 
-                Vector3 dir = (transform.position - collision.gameObject.transform.position).normalized;
-                Debug.Log("Dir " + dir);
-                CreateRoot( ( transform.position - collision.gameObject.transform.position ).normalized );
+				Vector3 dir = MPlayer.Instance.DeltaPos;
+				CreateRoot (dir.normalized);
             }
-        }
+		}
+
+//        if (collision.tag == "Plant")
+//        {
+//
+//            if (m_state != State.Active)
+//            {
+//                m_state = State.Active;
+//                
+//                Vector3 dir = (transform.position - collision.gameObject.transform.position).normalized;
+//                Debug.Log("Dir " + dir);
+//                CreateRoot( ( transform.position - collision.gameObject.transform.position ).normalized );
+//            }
+//		} 
     }
 
     //public void OnEnable()
@@ -102,7 +115,14 @@ public class PlantSeed : PlantBase {
 
     public void CreateRoot( Vector3 dir )
     {
-        int createNumber = Random.RandomRange(1, 4);
+		// show active effect
+		var effect = Instantiate( activeEffect , transform ) as GameObject;
+		effect.transform.localPosition = Vector3.zero;
+
+		// create root
+		int createNumber = 1 ; //Random.RandomRange(1, 4);
+
+
 
         for (int i = 0; i < createNumber; ++i)
         {

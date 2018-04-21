@@ -32,9 +32,6 @@ public class PlantCreator : MonoBehaviour {
             distancer = distanceInterval.Rand;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-            CreatePlantEffect();
-
     }
 
     public int GetActiveNodeNumber()
