@@ -5,17 +5,20 @@ using Sirenix.OdinInspector;
 
 public class PlantCreator : MonoBehaviour {
 
-    [SerializeField] GameObject prefab;
+    [SerializeField] GameObject seedPrefab;
     [SerializeField] MinMax timeInterval = new MinMax(1f, 5f);
     [SerializeField] MinMax distanceInterval = new MinMax(1f, 5f);
     [SerializeField] int maxActiveNode = 10;
-   
+    [SerializeField] float createDistance = 10f;
+
+    [SerializeField] GameObject plantEffect;
 
     [Space(10f)]
     [Header("Status")]
     [SerializeField] [ReadOnly] float timer;
     [SerializeField] [ReadOnly] float distancer;
     [SerializeField] [ReadOnly] List<PlantNode> plantNodes = new List<PlantNode>();
+    [SerializeField] [ReadOnly] List<PlantSeed> plantSeeds = new List<PlantSeed>();
 
     private void Update()
     {
@@ -24,10 +27,14 @@ public class PlantCreator : MonoBehaviour {
 
         if (timer < 0 || distancer < 0)
         {
-            CreatePlant();
+            CreateSeed();
             timer = timeInterval.Rand;
             distancer = distanceInterval.Rand;
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            CreatePlantEffect();
+
     }
 
     public int GetActiveNodeNumber()
@@ -40,20 +47,56 @@ public class PlantCreator : MonoBehaviour {
         return sum;
     }
 
-    public void CreatePlant()
+    public int GetActiveSeedNumber()
     {
-        if (GetActiveNodeNumber() >= maxActiveNode)
+        int sum = 0;
+        for (int i = 0; i < plantSeeds.Count; ++i)
+            if (plantSeeds[i].MState == PlantSeed.State.Active )
+                sum++;
+
+        return sum;
+    }
+
+    public void CreateSeed()
+    {
+        if (GetActiveSeedNumber() >= maxActiveNode)
             return;
 
-        var plant = Instantiate(prefab) as GameObject;
-        var com = plant.GetComponent<PlantNode>();
-        plant.transform.position = MPlayer.Instance.Position + Vector3.forward;
+        var seed = Instantiate(seedPrefab) as GameObject;
 
-        float size = Random.RandomRange(0.5f, 1f);
-        Vector3 dir = MPlayer.Instance.DeltaPos.normalized + (Vector3) Random.insideUnitCircle * 0.5f ;
+        var pos = MPlayer.Instance.Position + (Vector3)Random.insideUnitCircle * createDistance;
+        seed.transform.position = pos;
 
-        com.Init( dir, size , null );
-        plantNodes.Add(com);
+        var com = seed.GetComponent<PlantSeed>();
+
+        com.Init(1f);
+
+        plantSeeds.Add(com);
+
     }
+
+    public void CreatePlantEffect()
+    {
+        var eff = Instantiate(plantEffect) as GameObject;
+        eff.transform.position = MPlayer.Instance.Position;
+
+
+    }
+
+    //public void CreatePlant()
+    //{
+    //    if (GetActiveNodeNumber() >= maxActiveNode)
+    //        return;
+
+    //    var plant = Instantiate(prefab) as GameObject;
+    //    var com = plant.GetComponent<PlantNode>();
+    //    plant.transform.position = MPlayer.Instance.Position + Vector3.forward;
+
+    //    float size = Random.RandomRange(0.5f, 1f);
+    //    Vector3 dir = MPlayer.Instance.DeltaPos.normalized + (Vector3) Random.insideUnitCircle * 0.5f ;
+
+    //    com.Init( dir, size , null );
+    //    plantNodes.Add(com);
+    //}
 
 }

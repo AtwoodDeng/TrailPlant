@@ -8,6 +8,9 @@ public class PlantBase : MonoBehaviour {
     {
         Root,
         Stem,
+        FlowerPetal,
+        Seed,
+
     }
 
     [Header("Plant")]

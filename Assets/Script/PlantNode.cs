@@ -24,6 +24,7 @@ public class PlantNode : PlantBase {
     //[SerializeField] float maxRadius = 5f;
     [SerializeField] MinMax lifeTime = new MinMax(5f, 10f);
     [SerializeField] MinMax speed = new MinMax(3f, 5f);
+    [SerializeField] AnimationCurve speedCurve;
     [SerializeField] AnimationCurve radiusCurve;
     [SerializeField] float minRadius = 0.2f;
     [SerializeField] float height = 0.1f;
@@ -54,6 +55,7 @@ public class PlantNode : PlantBase {
     [Tooltip("Decide the maxLength of the plant")]
     [SerializeField] [ReadOnly] float maxRadOffset = 4f;
     [SerializeField] [ReadOnly] List<float> splitList = new List<float>();
+    [SerializeField] [ReadOnly] List<float> dotList = new List<float>();
     float oriInvRadius = 0;
 
     public State MState { get { return m_state; }  }
@@ -90,6 +92,13 @@ public class PlantNode : PlantBase {
             splitList.Sort();
         }
 
+        int dotTime = Random.RandomRange(2, 5);
+        for (int i = 0; i < dotTime; ++i)
+        {
+            dotList.Add(Random.RandomRange(0.2f, 1.2f));
+            dotList.Sort();
+        }
+
 
     }
     
@@ -101,6 +110,7 @@ public class PlantNode : PlantBase {
 
             UpdateGrow();
             UpdateSplit();
+            UpdateDot();
 
             if (CheckFinish())
                 m_state = State.Finished;
@@ -122,7 +132,7 @@ public class PlantNode : PlantBase {
         Vector3 acc = Vector3.Cross(velocity, Vector3.forward) * velocity.sqrMagnitude * temInvRadius;
 
         velocity += acc * Time.deltaTime;
-        velocity = velocity.normalized * m_speed;
+        velocity = velocity.normalized * m_speed ;
 
         radOffset += velocity.magnitude * Time.deltaTime * temInvRadius;
 
@@ -132,7 +142,7 @@ public class PlantNode : PlantBase {
         //Debug.Log("Tem Radius " + ( 1f / temInvRadius) );
 
         if ( trail.gameObject != null)
-            trail.gameObject.transform.position += velocity * Time.deltaTime;
+            trail.gameObject.transform.position += velocity * Time.deltaTime * speedCurve.Evaluate(LifeRatio);
 
         trail.height = heightCurve.Evaluate(LifeRatio) * m_height;
 
@@ -159,13 +169,38 @@ public class PlantNode : PlantBase {
 
                     com.Init(initDir, size, this, radius);
                 }
-                
             }
         }
-
     }
 
-    
+    public void UpdateDot()
+    {
+        if (m_type == Type.Root)
+        {
+            for (int i = 0; i < dotList.Count; ++i)
+            {
+                if (dotList[i] < LifeRatio)
+                {
+                    dotList[i] = 99999f;
+
+                    var plant = Instantiate(plantDot) as GameObject;
+                    var com = plant.GetComponent<PlantDot>();
+
+                    Vector3 sidePos = trail.transform.position + Vector3.Cross(velocity, Vector3.forward * Mathf.Sign(temInvRadius)).normalized * height ;
+
+                    sidePos *= Random.RandomRange(1f, 1.5f);
+
+                    plant.transform.position = sidePos;
+                    plant.transform.parent = transform;
+
+                    //float radius = - temInvRadius * Random.RandomRange(0.5f, 1f);
+                    float size = m_size * Random.RandomRange(0.7f, 1f);
+
+                    com.Init(size);
+                }
+            }
+        }
+    }
 
     public bool CheckFinish()
     {
