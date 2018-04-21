@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Global{
+
+    public float GetDistanceToPlayer( Vector3 pos )
+    {
+        return (pos - MPlayer.Instance.Position).magnitude;
+    }
 }
 
 
