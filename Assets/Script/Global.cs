@@ -4,10 +4,38 @@ using UnityEngine;
 
 public class Global{
 
-    public float GetDistanceToPlayer( Vector3 pos )
+	static public float GetDistanceToPlayer( Vector3 pos )
     {
         return (pos - MPlayer.Instance.Position).magnitude;
     }
+
+	/// <summary>
+	/// Checks the in frame.
+	/// </summary>
+	/// <returns><c>true</c>, if in the pos is out of the frame, <c>false</c> otherwise.</returns>
+	/// <param name="pos">Position.</param>
+	/// <param name="vel">Vel.</param>
+	static public bool CheckInFrame( Vector3 pos , ref Vector3 vel )
+	{
+		float frameRange = 100f;
+		if (pos.x > frameRange && vel.x > 0) {
+			vel.x = -vel.x;
+			return true;
+		}
+		if (pos.x < - frameRange && vel.x < 0) {
+			vel.x = -vel.x;
+			return true;
+		}
+		if (pos.y > frameRange && vel.x > 0) {
+			vel.y = -vel.y;
+			return true;
+		}
+		if (pos.y > frameRange && vel.y > 0) {
+			vel.y = -vel.y;
+			return true;
+		}
+		return false;
+	}
 }
 
 

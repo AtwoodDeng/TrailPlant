@@ -254,7 +254,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 0
   minRadius: 0.2
-  height: 0.75
+  height: 0.45
   heightCurve:
     serializedVersion: 2
     m_Curve:

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class MPlayer : MonoBehaviour {
 
@@ -31,11 +32,18 @@ public class MPlayer : MonoBehaviour {
     [SerializeField] [ReadOnly] float dashDistancer = 0;
     [SerializeField] float dashVel = 40f;
     [SerializeField] ParticleSystem dashParticle;
+	[SerializeField] SpriteRenderer centerSprite;
+	[SerializeField] GameObject hitEffect;
     [SerializeField] AudioSource m_source;
     [SerializeField] AudioClip dashSound;
     [SerializeField] AudioClip pickSound;
+	[SerializeField] AudioClip hitSound;
+
+	[SerializeField] float hp = 100f;
 
     public bool isPlant = false;
+
+	public bool isProtect = false;
 
     [SerializeField][ReadOnly] PlantSeed m_seed;
 
@@ -168,5 +176,38 @@ public class MPlayer : MonoBehaviour {
         m_seed = null;
     }
 
+	public void Attack( Enermy sender , float dmg )
+	{
+		if (!isProtect) {
+			hp -= dmg;
+
+			isProtect = true;
+
+			m_source.clip = hitSound;
+			m_source.Play ();
+
+			centerSprite.transform.DOShakePosition (1f, 0.5f);
+
+			var seq = DOTween.Sequence ();
+			seq.Append (centerSprite.DOColor (Color.gray, 0.5f).SetEase (Ease.InOutCubic));
+			seq.Append (centerSprite.DOColor (Color.white, 0.5f).SetEase (Ease.InOutCubic));
+			seq.Append (centerSprite.DOColor (Color.gray, 0.5f).SetEase (Ease.InOutCubic));
+			seq.Append (centerSprite.DOColor (Color.white, 0.5f).SetEase (Ease.InOutCubic));
+			seq.Append (centerSprite.DOColor (Color.gray, 0.5f).SetEase (Ease.InOutCubic));
+			seq.Append (centerSprite.DOColor (Color.white, 0.5f).SetEase (Ease.InOutCubic));
+			seq.AppendCallback (delegate {
+				isProtect = false;	
+			});
+
+			var hitE = Instantiate (hitEffect);
+			hitE.transform.parent = transform;
+			hitE.transform.localPosition = Vector3.zero;
+		}
+	}
+
+	public void OnGUI()
+	{
+		GUILayout.Label (" HP : " + hp );
+	}
 
 }
