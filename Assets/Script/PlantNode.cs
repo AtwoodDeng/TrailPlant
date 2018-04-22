@@ -56,14 +56,21 @@ public class PlantNode : PlantBase {
     [SerializeField] [ReadOnly] float maxRadOffset = 4f;
     [SerializeField] [ReadOnly] List<float> splitList = new List<float>();
     [SerializeField] [ReadOnly] List<float> dotList = new List<float>();
+    [SerializeField] [ReadOnly] PlantCreator.FlowerType m_FlowerType;
+    [SerializeField] [ReadOnly] PlantCreator.FlowerType m_FlowerSubType;
+
+    [SerializeField] AudioSource m_source;
     float oriInvRadius = 0;
 
     public State MState { get { return m_state; }  }
     public float LifeRatio {  get { return lifeTimer / m_lifeTime;  } }
 
-    public void Init(Vector3 initDir, float size , PlantBase parent , float invRadius = 0 )
+    public void Init(PlantCreator.FlowerType type, Vector3 initDir, float size , PlantBase parent , float invRadius = 0 , PlantCreator.FlowerType subType = PlantCreator.FlowerType.None )
     {
         base.Init( parent);
+
+        m_FlowerType = type;
+        m_FlowerSubType = subType;
 
         m_size = size;
         m_lifeTime = lifeTime.Rand;
@@ -84,6 +91,7 @@ public class PlantNode : PlantBase {
 
         trail.height = m_height;
         trail.width = intervel;
+        trail.vertexColor = PlantCreator.Instance.greenColor;
 
         int splitTime = Random.RandomRange(0, 5);
         for( int i = 0; i < splitTime; ++ i )
@@ -111,6 +119,7 @@ public class PlantNode : PlantBase {
             UpdateGrow();
             UpdateSplit();
             UpdateDot();
+            UpdateSound();
 
             if (CheckFinish())
                 m_state = State.Finished;
@@ -119,7 +128,14 @@ public class PlantNode : PlantBase {
         {
             trail.emit = false;
             trail.IsUpdateMesh = false;
+
+            m_source.volume *= Mathf.Max( 0 , 1f - 5f * Time.deltaTime);
         }
+    }
+
+    public void UpdateSound()
+    {
+        m_source.volume = speedCurve.Evaluate(LifeRatio) * 0.25f;
     }
 
     public void UpdateGrow()
@@ -167,7 +183,7 @@ public class PlantNode : PlantBase {
                     float radius = -temInvRadius * Random.RandomRange(0.5f, 1f);
                     float size = m_size * Random.RandomRange(0.6f, 1f);
 
-                    com.Init(initDir, size, this, radius);
+                    com.Init( m_FlowerType, initDir, size, this, radius , m_FlowerSubType);
                 }
             }
         }
@@ -186,17 +202,19 @@ public class PlantNode : PlantBase {
                     var plant = Instantiate(plantDot) as GameObject;
                     var com = plant.GetComponent<PlantDot>();
 
-                    Vector3 sidePos = trail.transform.position + Vector3.Cross(velocity, Vector3.forward * Mathf.Sign(temInvRadius)).normalized * height ;
+                    Vector3 stemDir = Vector3.Cross(velocity, Vector3.forward * Mathf.Sign(temInvRadius)).normalized;
+                    Vector3 sidePos = trail.transform.position + stemDir * height * Random.RandomRange(0.02f, 0.08f ) ;
 
                     sidePos *= Random.RandomRange(1f, 1.5f);
 
                     plant.transform.position = sidePos;
                     plant.transform.parent = transform;
+                    plant.transform.localEulerAngles = new Vector3(0, 0, Random.RandomRange(0, 360f));
 
                     //float radius = - temInvRadius * Random.RandomRange(0.5f, 1f);
                     float size = m_size * Random.RandomRange(0.7f, 1f);
 
-                    com.Init(size);
+                    com.Init( m_FlowerType, size , m_FlowerSubType);
                 }
             }
         }

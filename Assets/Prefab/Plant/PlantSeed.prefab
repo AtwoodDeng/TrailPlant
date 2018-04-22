@@ -130,6 +130,8 @@ MonoBehaviour:
   rootPrefab: {fileID: 1826254322591054, guid: d79d14085ef9029458404f805f299f3a, type: 2}
   activeEffect: {fileID: 1191662246090680, guid: ba764b7ef61be8147a76df9b87072582,
     type: 2}
+  m_FlowerType: 0
+  m_FlowerSubType: 0
 --- !u!212 &212558154194297904
 SpriteRenderer:
   m_ObjectHideFlags: 1

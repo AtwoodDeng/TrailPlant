@@ -5,6 +5,18 @@ using Sirenix.OdinInspector;
 
 public class PlantCreator : MonoBehaviour {
 
+    public static PlantCreator Instance
+    {
+        get
+        {
+            if (m_instance == null)
+                m_instance = FindObjectOfType<PlantCreator>();
+            return m_instance;
+        }
+    }
+
+    private static PlantCreator m_instance;
+
     [SerializeField] GameObject seedPrefab;
     [SerializeField] MinMax timeInterval = new MinMax(1f, 5f);
     [SerializeField] MinMax distanceInterval = new MinMax(1f, 5f);
@@ -19,6 +31,35 @@ public class PlantCreator : MonoBehaviour {
     [SerializeField] [ReadOnly] float distancer;
     [SerializeField] [ReadOnly] List<PlantNode> plantNodes = new List<PlantNode>();
     [SerializeField] [ReadOnly] List<PlantSeed> plantSeeds = new List<PlantSeed>();
+
+    public enum FlowerType
+    {
+        None,
+        Yellow,
+        Blue,
+        Red,
+        Perple,
+        Pink,
+        White,
+    }
+
+    [System.Serializable]
+    public class FlowerItem
+    {
+        public FlowerType type;
+        public int petalNumber;
+        public Color color;
+        public GameObject petalPrefab;
+        public GameObject budPrefab;
+    }
+
+    [Space(10f)]
+    [Header("Flower Library")]
+    [SerializeField] public Color greenColor;
+    [SerializeField] List<FlowerItem> flowerLibs = new List<FlowerItem>();
+    [SerializeField] [ReadOnly] PlantSeed m_seed;
+
+    
 
     private void Update()
     {
@@ -66,7 +107,7 @@ public class PlantCreator : MonoBehaviour {
 
         var com = seed.GetComponent<PlantSeed>();
 
-        com.Init(1f);
+        com.Init( GetRandomFlowerType().type , 1f , FlowerType.None );
 
         plantSeeds.Add(com);
 
@@ -78,6 +119,16 @@ public class PlantCreator : MonoBehaviour {
         eff.transform.position = MPlayer.Instance.Position;
 
 
+    }
+
+    public FlowerItem GetRandomFlowerType()
+    {
+        return flowerLibs[Random.RandomRange(0,flowerLibs.Count)];
+    }
+
+    public FlowerItem GetFlowerItem( FlowerType type )
+    {
+        return flowerLibs.Find((x) => x.type == type);
     }
 
     //public void CreatePlant()

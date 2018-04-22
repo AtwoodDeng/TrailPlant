@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 114982754646073898}
   - component: {fileID: 33968856515290934}
   - component: {fileID: 23028172835865104}
+  - component: {fileID: 82142566325521372}
   m_Layer: 0
   m_Name: RainbowTrail
   m_TagString: Untagged
@@ -113,6 +114,86 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1535000518409718}
   m_Mesh: {fileID: 0}
+--- !u!82 &82142566325521372
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1535000518409718}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: a29e2078a83c25b43b9872c82ea15fd0, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 15
+  Pan2D: 0
+  rolloffMode: 2
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &114466827638704808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -157,6 +238,12 @@ MonoBehaviour:
       inSlope: -0.06391704
       outSlope: -0.06391704
       tangentMode: 0
+    - serializedVersion: 2
+      time: 3.0780857
+      value: 1.0159048
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
@@ -179,7 +266,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 0
   minRadius: 0.2
-  height: 0.5
+  height: 1
   heightCurve:
     serializedVersion: 2
     m_Curve:
@@ -224,6 +311,9 @@ MonoBehaviour:
   maxRadOffset: 4
   splitList: []
   dotList: []
+  m_FlowerType: 0
+  m_FlowerSubType: 0
+  m_source: {fileID: 82142566325521372}
 --- !u!114 &114982754646073898
 MonoBehaviour:
   m_ObjectHideFlags: 1

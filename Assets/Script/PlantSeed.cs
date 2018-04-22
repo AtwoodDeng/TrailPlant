@@ -10,7 +10,8 @@ public class PlantSeed : PlantBase {
     public enum State
     {
         Show,
-        Appear,
+        // Appear,
+        Hold,
         Active,
         Hide,
     };
@@ -23,6 +24,8 @@ public class PlantSeed : PlantBase {
     [SerializeField] float basicSize = 0.4f;
     [SerializeField] GameObject rootPrefab;
 	[SerializeField] GameObject activeEffect;
+    [SerializeField] [ReadOnly] PlantCreator.FlowerType m_FlowerType;
+    [SerializeField] [ReadOnly] PlantCreator.FlowerType m_FlowerSubType;
 
     public State MState {  get { return m_state;  } }
 
@@ -33,13 +36,19 @@ public class PlantSeed : PlantBase {
 
 		if (collision.tag == "Player") {
 
-            if (m_state != State.Active)
+            if (m_state == State.Show )
             {
-                m_state = State.Active;
-                
-				Vector3 dir = MPlayer.Instance.DeltaPos;
-				CreateRoot (dir.normalized);
+
+                if ( MPlayer.Instance.GetSeed(this) )
+                {
+                    m_state = State.Hold;
+
+                    Vector3 dir = MPlayer.Instance.DeltaPos;
+
+                }
+				// CreateRoot (dir.normalized);
             }
+
 		}
 
 //        if (collision.tag == "Plant")
@@ -78,10 +87,15 @@ public class PlantSeed : PlantBase {
         PlayHideAnimation(target, hideDuration);
     }
 
-    public void Init( float size )
+    public void Init( PlantCreator.FlowerType type, float size , PlantCreator.FlowerType subType = PlantCreator.FlowerType.None )
     {
         m_size = size;
-        
+        m_FlowerType = type;
+        m_FlowerSubType = subType;
+
+        target.GetComponent<SpriteRenderer>().color = PlantCreator.Instance.greenColor;
+
+
         m_state = State.Show;
         PlayShowUpAnimation(target, showUpDuration, true , 0.2f );
     }
@@ -115,6 +129,8 @@ public class PlantSeed : PlantBase {
 
     public void CreateRoot( Vector3 dir )
     {
+
+        m_state = State.Active;
 		// show active effect
 		var effect = Instantiate( activeEffect , transform ) as GameObject;
 		effect.transform.localPosition = Vector3.zero;
@@ -122,8 +138,7 @@ public class PlantSeed : PlantBase {
 		// create root
 		int createNumber = 1 ; //Random.RandomRange(1, 4);
 
-
-
+        
         for (int i = 0; i < createNumber; ++i)
         {
             var plant = Instantiate(rootPrefab) as GameObject;
@@ -135,7 +150,7 @@ public class PlantSeed : PlantBase {
             dir = (dir.normalized + (Vector3)Random.insideUnitCircle * 0.1f);
             dir.z = 0;
 
-            com.Init(dir.normalized, size, this);
+            com.Init(m_FlowerType, dir.normalized, size, this , 0 , m_FlowerSubType);
         }
     }
 
