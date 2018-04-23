@@ -217,7 +217,7 @@ MonoBehaviour:
   source: {fileID: 82085062392672434}
   initClip: {fileID: 8300000, guid: 031efd51ade564a4b875292b1906b949, type: 3}
   readyClip: {fileID: 8300000, guid: a77ff6fa4e01f6b4aabb3ab499c49271, type: 3}
-  ActiveClip: {fileID: 8300000, guid: cce0cd6e42edaf64c844cf2dd3696156, type: 3}
+  ActiveClip: {fileID: 0}
   DieClip: {fileID: 0}
 --- !u!114 &114283645502424290
 MonoBehaviour:
@@ -341,8 +341,8 @@ MonoBehaviour:
         fsmArrayParams: []
         fsmEnumParams: []
         fsmFloatParams:
-        - useVariable: 0
-          name: 
+        - useVariable: 1
+          name: GrowTime
           tooltip: 
           showInInspector: 0
           networkSync: 0
@@ -699,7 +699,13 @@ MonoBehaviour:
       isGlobal: 0
     globalTransitions: []
     variables:
-      floatVariables: []
+      floatVariables:
+      - useVariable: 1
+        name: GrowTime
+        tooltip: 
+        showInInspector: 0
+        networkSync: 0
+        value: 5
       intVariables: []
       boolVariables: []
       stringVariables: []
@@ -722,7 +728,7 @@ MonoBehaviour:
       enumVariables: []
       categories:
       - 
-      variableCategoryIDs: 00000000
+      variableCategoryIDs: 0000000000000000
     description: 
     docUrl: 
     showStateLabel: 0
@@ -732,7 +738,7 @@ MonoBehaviour:
     locked: 0
     manualUpdate: 0
     keepDelayedEventsOnStateExit: 0
-    preprocessed: 1
+    preprocessed: 0
     ExposedEvents: []
     RestartOnEnable: 1
     EnableDebugFlow: 0

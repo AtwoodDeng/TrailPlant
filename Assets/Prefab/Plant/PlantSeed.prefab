@@ -121,7 +121,7 @@ MonoBehaviour:
   m_children: []
   m_parent: {fileID: 0}
   m_type: 3
-  showUpDuration: 2
+  showUpDuration: 0.1
   hideDuration: 2
   m_state: 0
   target: {fileID: 4202339315343850}

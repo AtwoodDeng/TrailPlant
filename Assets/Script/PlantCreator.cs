@@ -18,6 +18,7 @@ public class PlantCreator : MonoBehaviour {
     private static PlantCreator m_instance;
 
     [SerializeField] GameObject seedPrefab;
+    [SerializeField] GameObject SelectPrefab;
     [SerializeField] MinMax timeInterval = new MinMax(1f, 5f);
     [SerializeField] MinMax distanceInterval = new MinMax(1f, 5f);
     [SerializeField] int maxActiveNode = 10;
@@ -25,12 +26,15 @@ public class PlantCreator : MonoBehaviour {
 
     [SerializeField] GameObject plantEffect;
 
+
     [Space(10f)]
     [Header("Status")]
     [SerializeField] [ReadOnly] float timer;
     [SerializeField] [ReadOnly] float distancer;
     [SerializeField] [ReadOnly] List<PlantNode> plantNodes = new List<PlantNode>();
     [SerializeField] [ReadOnly] List<PlantSeed> plantSeeds = new List<PlantSeed>();
+
+    
 
     public enum FlowerType
     {
@@ -51,28 +55,70 @@ public class PlantCreator : MonoBehaviour {
         public Color color;
         public GameObject petalPrefab;
         public GameObject budPrefab;
+        public GameObject AttackPrefab;
     }
 
+    [SerializeField] AudioSource m_source;
+    [SerializeField] AudioClip errorSound;
     [Space(10f)]
     [Header("Flower Library")]
     [SerializeField] public Color greenColor;
     [SerializeField] List<FlowerItem> flowerLibs = new List<FlowerItem>();
     [SerializeField] [ReadOnly] PlantSeed m_seed;
 
-    
+
+    int temSeedIndex = 0;
 
     private void Update()
     {
         timer -= Time.deltaTime;
         distancer -= MPlayer.Instance.DeltaPos.magnitude;
+       
 
         if (timer < 0 || distancer < 0)
         {
-            CreateSeed();
+            //CreateSeed();
             timer = timeInterval.Rand;
             distancer = distanceInterval.Rand;
         }
 
+        if (MPlayer.Instance.PlayerAction.SwitchPlant.WasPressed)
+        {
+            if (MPlayer.Instance.IsReadyPlant) {
+                if (MPlayer.Instance.isPlant)
+                    temSeedIndex = (temSeedIndex + 1) % flowerLibs.Count;
+
+                 SelectSeed(flowerLibs[temSeedIndex]);
+             }else
+            {
+                m_source.clip = errorSound;
+                m_source.Play();
+            }
+        }
+
+        
+
+    }
+
+    public void SelectSeed( FlowerItem item )
+    {
+        if ( MPlayer.Instance.isPlant )
+        {
+           MPlayer.Instance.Drop();
+
+        }
+
+        var effect = Instantiate(SelectPrefab) as GameObject;
+        effect.transform.position = transform.position;
+        var effCom = effect.GetComponentInChildren<SpriteRenderer>();
+        effCom.color = item.color;
+
+
+        var seed = Instantiate(seedPrefab) as GameObject;
+        var com = seed.GetComponent<PlantSeed>();
+        com.Init(item.type, 1f, FlowerType.None);
+        plantSeeds.Add(com);
+        MPlayer.Instance.GetSeed(com);
     }
 
     public int GetActiveNodeNumber()

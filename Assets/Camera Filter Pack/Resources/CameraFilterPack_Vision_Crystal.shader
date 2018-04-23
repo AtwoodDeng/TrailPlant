@@ -54,7 +54,7 @@ return OUT;
 
 float4 frag (v2f i) : COLOR{
 
-float2 rv=uvst.xy+float2(_Value2,_Value3);
+float2 rv=float2(_Value2,_Value3);
 float3 c=float3(0,0,0);
 float z=_Time*20;
 float l=z;
@@ -80,7 +80,7 @@ l=length(p);
 uv+=p/l*(sin(z)+_Value)*abs(sin(l*9.-z*2.));
 c.b=.01/length(abs(fmod(uv,1.)-.5));
 
-c+=tex2D(_MainTex,uvst.xy);
+// c+=tex2D(_MainTex,uvst.xy);
 return float4(c/l,1.0);
 }
 ENDCG

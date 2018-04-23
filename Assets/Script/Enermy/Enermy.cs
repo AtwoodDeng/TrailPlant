@@ -20,6 +20,7 @@ public class Enermy : MonoBehaviour {
 	[SerializeField][ReadOnlyAttribute] protected Vector3 toPlayer;
 
 	[SerializeField][ReadOnlyAttribute] float m_health = 100f;
+    [SerializeField] GameObject hitEffect;
 
 	[SerializeField] protected AudioSource m_source;
 	[SerializeField]protected AudioClip attackSFX;
@@ -36,7 +37,12 @@ public class Enermy : MonoBehaviour {
 		randomSeed = Random.Range (0,1f);
 	}
 
-	public void Update()
+    public void Start()
+    {
+        GameController.Instance.RegisterEnermy(this);
+    }
+
+    public void Update()
 	{
 		toPlayer = (- transform.position + MPlayer.Instance.Position);
 		toPlayer.z = 0;
@@ -69,7 +75,6 @@ public class Enermy : MonoBehaviour {
 		transform.up = m_velocity;
 
 		m_velocity += acc * toPlayer.normalized * Time.deltaTime;
-//		m_velocity = toPlayer.normalized * vel;
 
 		m_velocity = Vector3.ClampMagnitude (m_velocity, vel);
 
@@ -80,6 +85,8 @@ public class Enermy : MonoBehaviour {
 
     public void EnterRandomMove()
     {
+
+
 		m_velocity = m_velocity.normalized * vel * 0.5f ;
 
 		randDir = (Vector3)Random.insideUnitCircle.normalized;
@@ -98,9 +105,6 @@ public class Enermy : MonoBehaviour {
 
 		if ( Random.Range( 0 , 1f ) < 0.01f )
 			randDir = (Vector3)Random.insideUnitCircle.normalized;
-
-//		m_velocity += acc * Time.deltaTime * 
-//			new Vector3(  Mathf.PerlinNoise (pos.x + randomSeed, pos.y - randomSeed * 3f ) , Mathf.PerlinNoise (pos.y + randomSeed * 5f , pos.x * 3f + randomSeed) , 0 );
 
 		m_velocity += acc * Time.deltaTime * randDir.normalized;
 
@@ -133,9 +137,6 @@ public class Enermy : MonoBehaviour {
 			fsm.SendEvent ("ToMove");
 
 		m_rigidbody.velocity = m_velocity;
-
-//		if (m_velocity.magnitude < vel * 0.1f)
-//			fsm.SendEvent ("ToMove");
     }
 
 	public void EnterDie()
@@ -145,18 +146,13 @@ public class Enermy : MonoBehaviour {
 		m_rigidbody.velocity = Vector3.zero;
 
 		m_sprite.transform.DOScale (0, animationDuration).SetEase (Ease.InOutCubic).OnComplete (delegate {
+
+            GameController.Instance.EnermyDead(this);
+
 			Destroy( gameObject );	
 		});
 	}
 
-	public void EnterStand()
-	{
-		m_velocity = m_velocity * 0.0001f;
-
-		m_rigidbody.isKinematic = true;
-
-		m_rigidbody.velocity = m_velocity;
-	}
 
 
 	public void OnTriggerEnter2D( Collider2D col )
@@ -173,8 +169,15 @@ public class Enermy : MonoBehaviour {
 
 		m_health -= dmg;
 
+        m_sprite.transform.DOShakePosition(0.5f, 0.5f);
+
+        var hit = Instantiate(hitEffect) as GameObject;
+        hit.transform.parent = transform;
+        hit.transform.localPosition = Vector3.zero;
+
 		if (m_health <= 0) {
 			fsm.SendEvent ("ToDie");
 		}
 	}
+
 }

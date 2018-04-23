@@ -13,6 +13,7 @@ public enum LogicEvents
 
     MakePlant = 10,
 
+    ActivePlant = 20,
 }
 
 public class M_Event : MonoBehaviour {

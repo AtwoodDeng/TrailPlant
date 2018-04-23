@@ -37,13 +37,27 @@ public class EnermyRange : Enermy {
 
 	public void FireBullet()
 	{
+        Debug.Log("Fire ");
+
 		if (bulletType == BulletType.Normal) {
 			FireNormalBullet ();
 		}
 	}
-	public void UpdateStand()
+
+    public void EnterStand()
+    {
+        Debug.Log("Stand " + fsm.FsmVariables.GetVariable("PlayerDis"));
+        m_velocity = m_velocity * 0.0001f;
+
+        m_rigidbody.isKinematic = true;
+
+        m_rigidbody.velocity = m_velocity;
+    }
+
+    public void UpdateStand()
 	{
 		transform.up = toPlayer.normalized;
+        
 	}
 
 	public void FireNormalBullet()

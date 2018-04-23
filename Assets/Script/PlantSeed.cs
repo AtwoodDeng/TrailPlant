@@ -27,6 +27,7 @@ public class PlantSeed : PlantBase {
     [SerializeField] [ReadOnly] PlantCreator.FlowerType m_FlowerType;
     [SerializeField] [ReadOnly] PlantCreator.FlowerType m_FlowerSubType;
 
+    public PlantCreator.FlowerType MFlowerType {  get { return m_FlowerType; } }
     public State MState {  get { return m_state;  } }
 
 
@@ -34,22 +35,22 @@ public class PlantSeed : PlantBase {
     {
         //Debug.Log("Active " + collision.tag);
 
-		if (collision.tag == "Player") {
+		//if (collision.tag == "Player") {
 
-            if (m_state == State.Show )
-            {
+  //          if (m_state == State.Show )
+  //          {
 
-                if ( MPlayer.Instance.GetSeed(this) )
-                {
-                    m_state = State.Hold;
+  //              if ( MPlayer.Instance.GetSeed(this) )
+  //              {
+  //                  // m_state = State.Hold;
 
-                    Vector3 dir = MPlayer.Instance.DeltaPos;
+  //                  // Vector3 dir = MPlayer.Instance.DeltaPos;
 
-                }
-				// CreateRoot (dir.normalized);
-            }
+  //              }
+		//		// CreateRoot (dir.normalized);
+  //          }
 
-		}
+		//}
 
 //        if (collision.tag == "Plant")
 //        {
@@ -93,7 +94,10 @@ public class PlantSeed : PlantBase {
         m_FlowerType = type;
         m_FlowerSubType = subType;
 
-        target.GetComponent<SpriteRenderer>().color = PlantCreator.Instance.greenColor;
+
+        var item = PlantCreator.Instance.GetFlowerItem(type);
+
+        target.GetComponent<SpriteRenderer>().color =  item.color ;
 
 
         m_state = State.Show;

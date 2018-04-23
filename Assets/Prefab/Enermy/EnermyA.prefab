@@ -139,7 +139,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 15
+  MaxDistance: 50
   Pan2D: 0
   rolloffMode: 2
   BypassEffects: 0
@@ -223,6 +223,7 @@ MonoBehaviour:
   m_velocity: {x: 0, y: 0, z: 0}
   toPlayer: {x: 0, y: 0, z: 0}
   m_health: 100
+  hitEffect: {fileID: 1547663953153538, guid: 362f28eeb1fc5be4c8d41a9aba08cd33, type: 2}
   m_source: {fileID: 82367116699953570}
   attackSFX: {fileID: 8300000, guid: 7a776c340004edd4c946b442f625ae26, type: 3}
   hitSFX: {fileID: 8300000, guid: 638bd1c2611be8c469e8b85fc17c9070, type: 3}
@@ -1148,7 +1149,7 @@ MonoBehaviour:
       variableCategoryIDs: 000000000000000000000000000000000000000000000000
     description: 
     docUrl: 
-    showStateLabel: 1
+    showStateLabel: 0
     maxLoopCount: 0
     watermark: 
     password: 
@@ -1221,10 +1222,10 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 878114065
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 0a829e27797b09f438b5d6d4dbc74ea3, type: 3}
-  m_Color: {r: 0.53676474, g: 0.53676474, b: 0.53676474, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 02d6fe3fb0089b74eb53cab59ee208f6, type: 3}
+  m_Color: {r: 1, g: 0.31033736, b: 0.31033736, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

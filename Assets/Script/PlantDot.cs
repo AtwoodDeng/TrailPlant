@@ -70,7 +70,10 @@ public class PlantDot : PlantBase {
 
         var item = PlantCreator.Instance.GetFlowerItem(m_FlowerType);
 
-        PlayShowPetalAnimation(item.petalNumber, item.budPrefab, item.color, 0);
+        for (int i = 0; i < m_petals.Count; ++i)
+            PlayShowUpAnimation(m_petals[i].transform, 0.5f, false, i * 0.05f);
+
+        // PlayShowPetalAnimation(item.petalNumber, item.budPrefab, item.color, 0);
     }
 
     public void EnterActive()
@@ -91,13 +94,28 @@ public class PlantDot : PlantBase {
         if (m_FlowerType != PlantCreator.FlowerType.None)
         {
             var item = PlantCreator.Instance.GetFlowerItem(m_FlowerType);
-            PlayShowPetalAnimation( item.petalNumber , item.petalPrefab , item.color , 0);
+            PlayShowPetalAnimationFast( item.petalNumber , item.petalPrefab , item.color , 0);
+
+            if ( !GameController.Instance.IsZen)
+             CreateAttack(item.AttackPrefab);
         }
         if (m_FlowerSubType != PlantCreator.FlowerType.None)
         {
             var item = PlantCreator.Instance.GetFlowerItem(m_FlowerSubType);
-            PlayShowPetalAnimation(item.petalNumber, item.petalPrefab, item.color , 1.5f );
+            PlayShowPetalAnimationFast(item.petalNumber, item.petalPrefab, item.color , 1.5f );
+
+            if (!GameController.Instance.IsZen)
+                CreateAttack(item.AttackPrefab);
         }
+
+        M_Event.FireLogicEvent(LogicEvents.ActivePlant, new LogicArg(this));
+    }
+
+    public void CreateAttack( GameObject obj )
+    {
+        var att = Instantiate(obj) as GameObject;
+        att.transform.parent = transform;
+        att.transform.localPosition = Vector3.zero;
     }
 
     public void EnterDie()
@@ -112,8 +130,7 @@ public class PlantDot : PlantBase {
             sprite.DOColor(Color.black, hideDuration).SetEase(Ease.InOutCubic);
             sprite.DOFade(0, hideDuration).SetEase(Ease.InOutCubic).SetDelay(hideDuration * 0.5f );
             PlayHideAnimation(m_petals[i].transform, hideDuration, false, i * 0.05f + hideDuration * 0.5f );
-
-
+            
         }
 
         center.DOColor(Color.black, hideDuration).SetEase(Ease.InOutCubic);
@@ -142,6 +159,9 @@ public class PlantDot : PlantBase {
 
         source.clip = initClip;
         source.Play();
+
+
+        PlayShowPetalAnimation(item.petalNumber, item.budPrefab, item.color, 0);
     }
 
     public void PlayShowUpAnimation( Transform trans , float duration , bool force = false , float delay = 0 )
@@ -171,12 +191,20 @@ public class PlantDot : PlantBase {
 
     }
 
-    public void PlayShowPetalAnimation( int petalNumber , GameObject petalPrefab , Color color , float delay  )
+    public void PlayShowPetalAnimation(int petalNumber, GameObject petalPrefab, Color color, float delay)
     {
-        Sequence seq = DOTween.Sequence();
+        StartCoroutine(PlayShowPetalAnimationCor(petalNumber, petalPrefab, color, delay));
+    }
+    IEnumerator PlayShowPetalAnimationCor(int petalNumber, GameObject petalPrefab, Color color, float delay)
+    { 
 
         float deltaAngle = 360f / petalNumber;
-        
+
+        float interval = fsm.FsmVariables.GetFsmFloat("GrowTime").Value / petalNumber;
+
+
+        yield return new WaitForSeconds(delay);
+
         for( int i = 0; i < petalNumber; ++ i )
         {
             var obj = Instantiate(petalPrefab) as GameObject;
@@ -189,7 +217,42 @@ public class PlantDot : PlantBase {
 
             m_petals.Add(obj);
 
-            PlayShowUpAnimation(obj.transform, showUpDuration * 0.5f  , true , 0.05f * i + delay);
+            PlayShowUpAnimation(obj.transform, showUpDuration   , true , 0);
+            yield return new WaitForSeconds(interval);
+        }
+    }
+
+    public void PlayShowPetalAnimationFast(int petalNumber, GameObject petalPrefab, Color color, float delay)
+    {
+        StartCoroutine(PlayShowPetalAnimationFastCor(petalNumber, petalPrefab, color, delay));
+    }
+
+    IEnumerator PlayShowPetalAnimationFastCor(int petalNumber, GameObject petalPrefab, Color color, float delay)
+    { 
+        Sequence seq = DOTween.Sequence();
+
+        float deltaAngle = 360f / petalNumber;
+
+        float interval = 0.1f;
+
+        yield return new WaitForSeconds(delay);
+
+        for (int i = 0; i < petalNumber; ++i)
+        {
+            var obj = Instantiate(petalPrefab) as GameObject;
+            obj.transform.parent = transform;
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localScale = Vector3.zero;
+            obj.transform.eulerAngles = new Vector3(0, 0, deltaAngle * i);
+
+            obj.GetComponentInChildren<SpriteRenderer>().color = color;
+
+            m_petals.Add(obj);
+
+
+
+            PlayShowUpAnimation(obj.transform, showUpDuration * 0.5f , true , 0);
+            yield return new WaitForSeconds(interval);
         }
     }
 

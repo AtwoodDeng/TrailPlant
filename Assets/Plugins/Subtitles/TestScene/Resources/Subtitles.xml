@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<subtitles>
+  <styles>
+    <style id="dialog" red="1" green="1" blue="1" italic="0" />
+    <style id="sound" red="0" green="1" blue="1" italic="1" />
+    <style id="longtext" red="1" green="1" blue="0" italic="1" />
+  </styles>
+  <texts>
+    <subtitle id="start" duration="5.5" style="dialog">Hello! How are you?</subtitle>
+    <subtitle id="snap" duration="6" style="sound">*Snap*</subtitle>
+    <subtitle id="lorem" duration="4.1" style="longtext">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam pulvinar lectus vel tortor imperdiet, et dapibus sem varius. Quisque felis sem, gravida sit amet vehicula vel, auctor in erat. Sed nec arcu viverra, convallis justo quis, tempor eros. Fusce ipsum massa, ultrices id dapibus ac, elementum id tortor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</subtitle>
+  </texts>
+</subtitles>

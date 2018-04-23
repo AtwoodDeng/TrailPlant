@@ -298,6 +298,12 @@ MonoBehaviour:
   RadOffset:
     min: 10
     max: 15
+  seedNumber:
+    min: 4
+    max: 6
+  stemNumber:
+    min: 0
+    max: 3
   m_size: 0
   temInvRadius: 5
   lifeTimer: 0

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class MPlayer : MonoBehaviour {
 
@@ -36,23 +37,37 @@ public class MPlayer : MonoBehaviour {
 	[SerializeField] GameObject hitEffect;
     [SerializeField] AudioSource m_source;
     [SerializeField] AudioClip dashSound;
+    [SerializeField] AudioClip zenDashSound;
     [SerializeField] AudioClip pickSound;
 	[SerializeField] AudioClip hitSound;
+    [SerializeField] AudioClip errorSound;
+    private MPlayerActions m_playerActions;
+    public MPlayerActions PlayerAction { get { return m_playerActions; } }
 
-	[SerializeField] float hp = 100f;
+    [SerializeField] float hp = 100f;
 
     public bool isPlant = false;
 
 	public bool isProtect = false;
 
     [SerializeField][ReadOnly] PlantSeed m_seed;
+    [SerializeField] float seedRenewDuration = 5f;
+    [SerializeField][ReadOnly] float seedTimer = 0;
+    [SerializeField] Image SeedProcessBar;
+    [SerializeField] Image SeedTypeBar;
+    [SerializeField] Image HealthBar;
 
     public Vector3 DeltaPos { get { return Position - lastPos; } }
     public Vector3 Position { get { return m_pos; } }
+
+    public bool IsReadyPlant {  get { return seedTimer < 0;  } }
+
+    public Vector3 Velocity {  get { return m_velocity; } }
 	// Use this for initialization
 	void Start () {
         m_pos = transform.position;
-	}
+        m_playerActions = MPlayerActions.CreateWithDefaultBindings();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -61,27 +76,53 @@ public class MPlayer : MonoBehaviour {
         else 
             UpdatePosition();
 
-        if (Input.GetKeyDown(KeyCode.Space) && !isDash  && !isPlant )
+        if (m_playerActions.Dash.WasPressed)
         {
-            StartDash();
+            if (!isDash && !isPlant)
+                StartDash();
+            else
+            {
+                m_source.clip = errorSound;
+                m_source.Play();
+            }
+        } 
 
+        if ( m_playerActions.Plant.WasPressed )
+        {
+            if (isPlant)
+            {
+                Plant();
+            }else
+            {
+                m_source.clip = errorSound;
+                m_source.Play();
+            }
         }
 
-        if ( Input.GetKeyDown(KeyCode.Space) && isPlant )
-        {
-            Plant();
-        }
+        UpdateUI();
 
         lastPos = m_pos;
         m_pos = transform.position;
+        seedTimer -= Time.deltaTime;
 
+    }
+
+    public void UpdateUI()
+    {
+        HealthBar.fillAmount = Mathf.Max(0, hp / 100f);
+        SeedProcessBar.fillAmount = Mathf.Max(0, 1f - seedTimer / seedRenewDuration);
+
+        if (m_seed != null)
+            SeedTypeBar.color = PlantCreator.Instance.GetFlowerItem(m_seed.MFlowerType).color;
+        else
+            SeedTypeBar.color = new Color(1f, 1f, 1f, 0);
     }
 
     public void UpdatePosition()
     {
         Vector3 input = Vector3.zero;
-        input.x = Input.GetAxis("Horizontal");
-        input.y = Input.GetAxis("Vertical");
+        input.x = m_playerActions.Move.X;
+        input.y = m_playerActions.Move.Y;
 
         if (input.magnitude < Mathf.Epsilon)
             m_velocity *= (1 - drag * Time.deltaTime);
@@ -96,6 +137,8 @@ public class MPlayer : MonoBehaviour {
         transform.up = m_velocity.normalized;
 
         rigidbody.velocity = m_velocity;
+
+        
         // Vector3.SmoothDamp( transform.position , trans )
     }
 
@@ -108,7 +151,7 @@ public class MPlayer : MonoBehaviour {
         var e = dashParticle.emission;
         e.enabled = true;
 
-        m_source.clip = dashSound;
+        m_source.clip = GameController.Instance.IsZen ? zenDashSound : dashSound;
         m_source.Play();
 
         GetComponent<CircleCollider2D>().radius *= 3f;
@@ -128,6 +171,8 @@ public class MPlayer : MonoBehaviour {
     public void UpdateDash()
     {
         dashDistancer += m_velocity.magnitude * Time.deltaTime;
+        if (m_velocity.magnitude < 0.1f)
+            EndDash();
 
         if ( dashDistancer >= dashDistance )
         {
@@ -166,14 +211,30 @@ public class MPlayer : MonoBehaviour {
 
     public void Plant()
     {
+        if (seedTimer < 0)
+        {
+            isPlant = false;
+            m_seed.GetComponentInChildren<SpriteRenderer>().sortingLayerName = "Default";
+            m_seed.GetComponentInChildren<SpriteRenderer>().sortingOrder = 0;
+
+            m_seed.CreateRoot(m_velocity.normalized);
+
+            m_seed.transform.parent = null;
+            m_seed = null;
+
+            seedTimer = seedRenewDuration;
+        }
+    }
+
+    public void Drop()
+    {
         isPlant = false;
-        m_seed.GetComponentInChildren<SpriteRenderer>().sortingLayerName = "Default";
-        m_seed.GetComponentInChildren<SpriteRenderer>().sortingOrder = 0;
 
-        m_seed.CreateRoot(m_velocity.normalized);
-
-        m_seed.transform.parent = null;
-        m_seed = null;
+        if (m_seed != null)
+        {
+            Destroy(m_seed.gameObject);
+            m_seed = null;
+        }
     }
 
 	public void Attack( Enermy sender , float dmg )
@@ -185,6 +246,8 @@ public class MPlayer : MonoBehaviour {
 
 			m_source.clip = hitSound;
 			m_source.Play ();
+
+            m_velocity = Vector3.zero;
 
 			centerSprite.transform.DOShakePosition (1f, 0.5f);
 
@@ -202,7 +265,18 @@ public class MPlayer : MonoBehaviour {
 			var hitE = Instantiate (hitEffect);
 			hitE.transform.parent = transform;
 			hitE.transform.localPosition = Vector3.zero;
-		}
+
+            if (hp <= 0 && hp > -10f )
+                Subtitles.show("You're died. But in this prototype. You can keep playing.");
+		} else
+        {
+            m_source.clip = hitSound;
+            m_source.Play();
+
+            var hitE = Instantiate(hitEffect);
+            hitE.transform.parent = transform;
+            hitE.transform.localPosition = Vector3.zero;
+        }
 	}
 
 	public void OnGUI()

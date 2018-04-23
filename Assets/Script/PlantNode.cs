@@ -34,6 +34,8 @@ public class PlantNode : PlantBase {
     [SerializeField] MinMax initRadius = new MinMax(5f, 10f);
     [Tooltip("Define the max rad offset the animation( how much detail in the end)")]
     [SerializeField] MinMax RadOffset = new MinMax(4f, 7f);
+    [SerializeField] MinMax seedNumber = new MinMax(2f, 5f);
+    [SerializeField] MinMax stemNumber = new MinMax(0, 5f);
     //[Tooltip("Define the speed of the radius change. related to the total length")]
     //[SerializeField] MinMax RadiusSpeed = new MinMax(0.2f, 0.5f);
     [Space(10f)]
@@ -93,14 +95,14 @@ public class PlantNode : PlantBase {
         trail.width = intervel;
         trail.vertexColor = PlantCreator.Instance.greenColor;
 
-        int splitTime = Random.RandomRange(0, 5);
+        int splitTime = (int)stemNumber.Rand;
         for( int i = 0; i < splitTime; ++ i )
         {
             splitList.Add(Random.RandomRange(0.4f, 1.2f));
             splitList.Sort();
         }
 
-        int dotTime = Random.RandomRange(2, 5);
+        int dotTime = (int)seedNumber.Rand;
         for (int i = 0; i < dotTime; ++i)
         {
             dotList.Add(Random.RandomRange(0.2f, 1.2f));

@@ -66,7 +66,7 @@ float4 frag(v2f i) : COLOR
 float2 uvst = UnityStereoScreenSpaceUVAdjust(i.texcoord, _MainTex_ST);
 
 float2 uv = uvst.xy;
-float2 uv2 = uvst2.xy;
+float2 uv2 = uvst.xy;
 float4 txtd = tex2D(_MainTex2, uv2);
 uv2 = float2(txtd.r, 1-txtd.g);
 uv2 = lerp(uv, uv2, _Fade);
